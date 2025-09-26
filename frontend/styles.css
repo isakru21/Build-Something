@@ -1,0 +1,11 @@
+/* Custom styles for the Media & Book Watchlist application */
+
+.star { 
+    cursor: pointer; 
+    color: lightgray; 
+    font-size: 2rem; 
+}
+
+.star.selected { 
+    color: gold; 
+}
