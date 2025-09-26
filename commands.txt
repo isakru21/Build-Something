@@ -1,9 +1,0 @@
-deploy.bat
-
-test-app.bat 
-
-kubectl get pods
-
-kubectl logs deployment/recipe-service-deployment
-
-file:///C:/Users/isakr/cloud/recipe-app/index.html

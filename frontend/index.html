@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Min Film- & Boklista</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <style>
+        .star { cursor: pointer; color: lightgray; font-size: 2rem; }
+        .star.selected { color: gold; }
+    </style>
+</head>
+
+<body class="h-full font-sans">
+    <div class="min-h-full bg-gray-100">
+        <div class="bg-indigo-800 pb-32">
+            <header class="py-10">
+                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <h1 class="text-3xl font-bold tracking-tight text-white">Min Film- & Boklista</h1>
+                    <p class="text-indigo-300 mt-1">Din personliga watchlist och läslista</p>
+                </div>
+            </header>
+        </div>
+
+        <main class="-mt-32">
+            <div class="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
+                <div class="rounded-lg bg-white px-5 py-6 shadow sm:px-6">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <!-- User Management Column -->
+                        <div class="md:col-span-1">
+                            <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">1. Skapa & Välj Användare</h2>
+                            <div class="space-y-4">
+                                <input type="text" id="username" placeholder="Användarnamn" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <input type="email" id="email" placeholder="E-post" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <button id="create-user-btn" class="w-full rounded-md bg-green-600 px-4 py-2 text-white font-semibold hover:bg-green-700">Skapa Användare</button>
+                            </div>
+                            <div class="mt-6">
+                                <label for="user-select" class="block text-sm font-medium text-gray-700">Välj en befintlig användare:</label>
+                                <select id="user-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></select>
+                            </div>
+                        </div>
+                        
+                        <!-- Add Media Item Column -->
+                        <div id="media-form-container" class="md:col-span-2 opacity-50 pointer-events-none">
+                            <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">2. Lägg till i din lista</h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <input type="text" id="media-title" placeholder="Titel (t.ex. Inception)" class="sm:col-span-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                
+                                <select id="media-type" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="Film">Film</option>
+                                    <option value="Bok">Bok</option>
+                                </select>
+                                
+                                <select id="media-status" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="vill_se">Vill se / läsa</option>
+                                    <option value="sett">Har sett / läst</option>
+                                </select>
+                                
+                                <div class="sm:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700">Betyg (om du sett/läst):</label>
+                                    <div id="rating-stars" class="flex">
+                                        <span class="star" data-value="1">★</span>
+                                        <span class="star" data-value="2">★</span>
+                                        <span class="star" data-value="3">★</span>
+                                        <span class="star" data-value="4">★</span>
+                                        <span class="star" data-value="5">★</span>
+                                    </div>
+                                    <input type="hidden" id="media-rating" value="0">
+                                </div>
+
+                                <textarea id="media-review" placeholder="Din korta recension..." class="sm:col-span-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" rows="3"></textarea>
+                                
+                                <button id="create-media-btn" class="sm:col-span-2 w-full rounded-md bg-indigo-600 px-4 py-2 text-white font-semibold hover:bg-indigo-700">Lägg till</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-10">
+                        <h2 class="text-2xl font-semibold text-gray-900 mb-4">Min Lista</h2>
+                        <div id="media-list" class="space-y-4">
+                            <p class="text-gray-500">Laddar din lista...</p>
+                        </div>
+                    </div>
+                </div>
+                 <div id="toast" class="fixed top-5 right-5 px-6 py-3 rounded-lg text-white shadow-lg transition-transform translate-x-[200%]">
+                    <p id="toast-message"></p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const createUserBtn = document.getElementById('create-user-btn');
+        const createMediaBtn = document.getElementById('create-media-btn');
+        const userSelect = document.getElementById('user-select');
+        const mediaFormContainer = document.getElementById('media-form-container');
+        const mediaList = document.getElementById('media-list');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+        const ratingStarsContainer = document.getElementById('rating-stars');
+        const ratingInput = document.getElementById('media-rating');
+
+        let users = [];
+        let allMediaItems = []; // Store all items from all users
+        
+        function showToast(message, isError = false) {
+            toastMessage.textContent = message;
+            toast.classList.remove('bg-green-500', 'bg-red-500', 'translate-x-[200%]');
+            toast.classList.add(isError ? 'bg-red-500' : 'bg-green-500', 'translate-x-0');
+            setTimeout(() => {
+                toast.classList.add('translate-x-[200%]');
+            }, 3000);
+        }
+
+        // Rating stars logic
+        ratingStarsContainer.addEventListener('click', e => {
+            if (e.target.classList.contains('star')) {
+                const value = e.target.dataset.value;
+                ratingInput.value = value;
+                const stars = ratingStarsContainer.querySelectorAll('.star');
+                stars.forEach(star => {
+                    star.classList.toggle('selected', star.dataset.value <= value);
+                });
+            }
+        });
+
+        function resetRating() {
+            ratingInput.value = 0;
+            ratingStarsContainer.querySelectorAll('.star').forEach(s => s.classList.remove('selected'));
+        }
+
+        createUserBtn.addEventListener('click', async () => {
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            if (!username || !email) {
+                showToast('Användarnamn och e-post krävs.', true);
+                return;
+            }
+            try {
+                const response = await fetch('http://localhost/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email })
+                });
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Kunde inte skapa användare.');
+                }
+                const newUser = await response.json();
+                users.push(newUser);
+                updateUserSelect();
+                showToast(`Användare '${newUser.username}' skapad!`);
+                document.getElementById('username').value = '';
+                document.getElementById('email').value = '';
+            } catch (error) {
+                showToast(error.message, true);
+            }
+        });
+
+        createMediaBtn.addEventListener('click', async () => {
+            const title = document.getElementById('media-title').value;
+            const type = document.getElementById('media-type').value;
+            const status = document.getElementById('media-status').value;
+            const rating = ratingInput.value;
+            const review = document.getElementById('media-review').value;
+            const author_id = userSelect.value;
+
+            if (!title || !author_id) {
+                showToast('Titel och en vald användare krävs.', true);
+                return;
+            }
+
+            try {
+                const payload = { title, type, status, author_id, rating, review };
+                const response = await fetch('http://localhost/media', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error('Kunde inte lägga till i listan.');
+
+                const newItem = await response.json();
+                allMediaItems.unshift(newItem); // Add to the global list
+                renderMediaItems(); // Re-render to show the new item for the current user
+                showToast(`'${newItem.title}' tillagd!`);
+                
+                // Reset form
+                document.getElementById('media-title').value = '';
+                document.getElementById('media-review').value = '';
+                resetRating();
+
+            } catch (error) {
+                showToast(error.message, true);
+            }
+        });
+
+        userSelect.addEventListener('change', () => {
+            if (userSelect.value) {
+                mediaFormContainer.classList.remove('opacity-50', 'pointer-events-none');
+                fetchMediaForCurrentUser(); // Fetch and render media for the selected user
+            } else {
+                mediaFormContainer.classList.add('opacity-50', 'pointer-events-none');
+                renderMediaItems(); // Render an empty list if no user is selected
+            }
+        });
+        
+        function updateUserSelect() {
+            const lastSelected = userSelect.value;
+            userSelect.innerHTML = '<option value="">-- Välj en Användare --</option>';
+            users.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.id || user._id;
+                option.textContent = `${user.username}`;
+                userSelect.appendChild(option);
+            });
+            const userToSelect = users.length > 0 ? (users[users.length -1].id || users[users.length -1]._id) : lastSelected;
+            if (userToSelect) {
+                 userSelect.value = userToSelect;
+            }
+            userSelect.dispatchEvent(new Event('change'));
+        }
+
+        function renderMediaItems() {
+            const currentUserId = userSelect.value;
+            // **FIX:** Filter the list to only show items for the selected user
+            const itemsForCurrentUser = currentUserId ? allMediaItems.filter(item => item.author_id === currentUserId) : [];
+            
+            if (itemsForCurrentUser.length === 0) {
+                mediaList.innerHTML = '<p class="text-gray-500">Din lista är tom. Lägg till en film eller bok ovan!</p>';
+                return;
+            }
+
+            mediaList.innerHTML = '';
+            itemsForCurrentUser.forEach(item => {
+                const author = users.find(u => (u.id || u._id) === item.author_id) || { username: item.author_username || 'Okänd' };
+                const ratingHTML = Array(5).fill(0).map((_, i) => 
+                    `<span class="${i < item.rating ? 'text-yellow-400' : 'text-gray-300'}">★</span>`
+                ).join('');
+
+                const mediaCard = `
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm">
+                        <div class="flex justify-between items-start">
+                             <div>
+                                <h3 class="font-bold text-lg text-indigo-700">${item.title}</h3>
+                                <p class="text-sm text-gray-500 mb-2">av ${author.username}</p>
+                             </div>
+                             <span class="text-xs font-semibold ${item.type === 'Film' ? 'bg-blue-100 text-blue-800' : 'bg-orange-100 text-orange-800'} px-2 py-1 rounded-full">${item.type}</span>
+                        </div>
+                        <div class="flex items-center space-x-2 my-2">
+                             ${item.rating > 0 ? ratingHTML : ''}
+                             <span class="text-xs font-medium text-gray-600">${item.status === 'sett' ? 'Sett / Läst' : 'Vill se / Läsa'}</span>
+                        </div>
+                        ${item.review ? `<p class="text-gray-700 mt-2 p-3 bg-gray-100 rounded">${item.review}</p>` : ''}
+                    </div>
+                `;
+                mediaList.innerHTML += mediaCard;
+            });
+        }
+        
+        async function fetchMediaForCurrentUser() {
+            const currentUserId = userSelect.value;
+            if (!currentUserId) {
+                allMediaItems = [];
+                renderMediaItems();
+                return;
+            }
+            try {
+                // Fetch only media for the current user
+                const mediaResponse = await fetch(`http://localhost/media?author_id=${currentUserId}`);
+                if (!mediaResponse.ok) throw new Error('Kunde inte hämta media.');
+                allMediaItems = await mediaResponse.json();
+                renderMediaItems();
+            } catch(error) {
+                showToast(error.message, true);
+                mediaList.innerHTML = `<p class="text-red-500">Fel vid laddning av data: ${error.message}</p>`;
+            }
+        }
+
+        async function initializeApp() {
+            try {
+                const usersResponse = await fetch('http://localhost/users');
+                if (!usersResponse.ok) throw new Error('Kunde inte hämta användare.');
+                users = await usersResponse.json();
+                updateUserSelect(); // This will also trigger the first media fetch via the 'change' event
+            } catch(error) {
+                showToast(error.message, true);
+                mediaList.innerHTML = `<p class="text-red-500">Fel vid laddning av data: ${error.message}</p>`;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>
+
