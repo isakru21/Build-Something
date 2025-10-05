@@ -104,24 +104,24 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: media-service-deployment # CHANGED
+  name: media-service-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: media-service # CHANGED
+      app: media-service
   template:
     metadata:
       labels:
-        app: media-service # CHANGED
+        app: media-service
     spec:
       initContainers:
         - name: wait-for-mongo
           image: busybox:1.35
           command: ['sh', '-c', 'until nc -z mongodb-service 27017; do echo waiting for mongo; sleep 2; done;']
       containers:
-        - name: media-service # CHANGED
-          image: isakrulander/media-service:1.0 # CHANGED
+        - name: media-service
+          image: isakrulander/media-service:1.0
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
@@ -133,10 +133,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: media-service # CHANGED
+  name: media-service
 spec:
   selector:
-    app: media-service # CHANGED
+    app: media-service
   ports:
     - protocol: TCP
       port: 5000

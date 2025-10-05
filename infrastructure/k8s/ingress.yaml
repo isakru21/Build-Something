@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: media-app-ingress # CHANGED
+  name: media-app-ingress
   annotations:
     nginx.ingress.kubernetes.io/cors-allow-origin: '*'
     nginx.ingress.kubernetes.io/cors-allow-methods: 'GET, POST, OPTIONS, PUT, DELETE'
@@ -19,10 +19,10 @@ spec:
             name: user-service
             port:
               number: 5001
-      - path: /media # CHANGED from /recipes
+      - path: /media
         pathType: Prefix
         backend:
           service:
-            name: media-service # CHANGED from recipe-service
+            name: media-service
             port:
               number: 5000

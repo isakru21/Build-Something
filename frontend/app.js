@@ -47,7 +47,7 @@ createUserBtn.addEventListener('click', async () => {
     const username = document.getElementById('username').value;
     const email = document.getElementById('email').value;
     if (!username || !email) {
-        showToast('Användarnamn och e-post krävs.', true);
+        showToast('Username and email are required.', true);
         return;
     }
     try {
@@ -63,7 +63,7 @@ createUserBtn.addEventListener('click', async () => {
         const newUser = await response.json();
         users.push(newUser);
         updateUserSelect();
-        showToast(`Användare '${newUser.username}' skapad!`);
+        showToast(`User '${newUser.username}' created!`);
         document.getElementById('username').value = '';
         document.getElementById('email').value = '';
     } catch (error) {
@@ -81,7 +81,7 @@ createMediaBtn.addEventListener('click', async () => {
     const author_id = userSelect.value;
 
     if (!title || !author_id) {
-        showToast('Titel och en vald användare krävs.', true);
+        showToast('Title and selected user are required.', true);
         return;
     }
 
@@ -97,7 +97,7 @@ createMediaBtn.addEventListener('click', async () => {
         const newItem = await response.json();
         allMediaItems.unshift(newItem);
         renderMediaItems();
-        showToast(`'${newItem.title}' tillagd!`);
+        showToast(`'${newItem.title}' added!`);
         
         // Reset form
         document.getElementById('media-title').value = '';
@@ -122,7 +122,7 @@ userSelect.addEventListener('change', () => {
 
 function updateUserSelect() {
     const lastSelected = userSelect.value;
-    userSelect.innerHTML = '<option value="">-- Välj en Användare --</option>';
+    userSelect.innerHTML = '<option value="">-- Select a User --</option>';
     users.forEach(user => {
         const option = document.createElement('option');
         option.value = user.id || user._id;
@@ -142,7 +142,7 @@ function renderMediaItems() {
     const itemsForCurrentUser = currentUserId ? allMediaItems.filter(item => item.author_id === currentUserId) : [];
     
     if (itemsForCurrentUser.length === 0) {
-        mediaList.innerHTML = '<p class="text-gray-500">Din lista är tom. Lägg till en film eller bok ovan!</p>';
+        mediaList.innerHTML = '<p class="text-gray-500">Your list is empty. Add a movie or book above!</p>';
         return;
     }
 
@@ -160,11 +160,11 @@ function renderMediaItems() {
                         <h3 class="font-bold text-lg text-indigo-700">${item.title}</h3>
                         <p class="text-sm text-gray-500 mb-2">av ${author.username}</p>
                      </div>
-                     <span class="text-xs font-semibold ${item.type === 'Film' ? 'bg-blue-100 text-blue-800' : 'bg-orange-100 text-orange-800'} px-2 py-1 rounded-full">${item.type}</span>
+                     <span class="text-xs font-semibold ${item.type === 'Movie' ? 'bg-blue-100 text-blue-800' : 'bg-orange-100 text-orange-800'} px-2 py-1 rounded-full">${item.type}</span>
                 </div>
                 <div class="flex items-center space-x-2 my-2">
                      ${item.rating > 0 ? ratingHTML : ''}
-                     <span class="text-xs font-medium text-gray-600">${item.status === 'sett' ? 'Sett / Läst' : 'Vill se / Läsa'}</span>
+                     <span class="text-xs font-medium text-gray-600">${item.status === 'completed' ? 'Watched / Read' : 'Want to watch/read'}</span>
                 </div>
                 ${item.review ? `<p class="text-gray-700 mt-2 p-3 bg-gray-100 rounded">${item.review}</p>` : ''}
             </div>
@@ -183,24 +183,24 @@ async function fetchMediaForCurrentUser() {
     }
     try {
         const mediaResponse = await fetch(`http://localhost/media?author_id=${currentUserId}`);
-        if (!mediaResponse.ok) throw new Error('Kunde inte hämta media.');
+        if (!mediaResponse.ok) throw new Error('Could not fetch media.');
         allMediaItems = await mediaResponse.json();
         renderMediaItems();
     } catch(error) {
         showToast(error.message, true);
-        mediaList.innerHTML = `<p class="text-red-500">Fel vid laddning av data: ${error.message}</p>`;
+        mediaList.innerHTML = `<p class="text-red-500">Error loading data: ${error.message}</p>`;
     }
 }
 
 async function initializeApp() {
     try {
         const usersResponse = await fetch('http://localhost/users');
-        if (!usersResponse.ok) throw new Error('Kunde inte hämta användare.');
+        if (!usersResponse.ok) throw new Error('Could not fetch users.');
         users = await usersResponse.json();
         updateUserSelect();
     } catch(error) {
         showToast(error.message, true);
-        mediaList.innerHTML = `<p class="text-red-500">Fel vid laddning av data: ${error.message}</p>`;
+        mediaList.innerHTML = `<p class="text-red-500">Error loading data: ${error.message}</p>`;
     }
 }
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Min Film- & Boklista</title>
+    <title>Media & Book Watchlist</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
     <link rel="stylesheet" href="styles.css">
@@ -14,8 +14,8 @@
         <div class="bg-indigo-800 pb-32">
             <header class="py-10">
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <h1 class="text-3xl font-bold tracking-tight text-white">Min Film- & Boklista</h1>
-                    <p class="text-indigo-300 mt-1">Din personliga watchlist och läslista</p>
+                    <h1 class="text-3xl font-bold tracking-tight text-white">Media & Book Watchlist</h1>
+                    <p class="text-indigo-300 mt-1">Your personal movie and book tracker</p>
                 </div>
             </header>
         </div>
@@ -27,36 +27,36 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <!-- User Management Column -->
                         <div class="md:col-span-1">
-                            <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">1. Skapa & Välj Användare</h2>
+                            <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">1. Create & Select User</h2>
                             <div class="space-y-4">
-                                <input type="text" id="username" placeholder="Användarnamn" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                <input type="email" id="email" placeholder="E-post" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                <button id="create-user-btn" class="w-full rounded-md bg-green-600 px-4 py-2 text-white font-semibold hover:bg-green-700">Skapa Användare</button>
+                                <input type="text" id="username" placeholder="Username" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <input type="email" id="email" placeholder="Email" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <button id="create-user-btn" class="w-full rounded-md bg-green-600 px-4 py-2 text-white font-semibold hover:bg-green-700">Create User</button>
                             </div>
                             <div class="mt-6">
-                                <label for="user-select" class="block text-sm font-medium text-gray-700">Välj en befintlig användare:</label>
+                                <label for="user-select" class="block text-sm font-medium text-gray-700">Select an existing user:</label>
                                 <select id="user-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></select>
                             </div>
                         </div>
                         
                         <!-- Add Media Item Column -->
                         <div id="media-form-container" class="md:col-span-2 opacity-50 pointer-events-none">
-                            <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">2. Lägg till i din lista</h2>
+                            <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">2. Add to Your List</h2>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <input type="text" id="media-title" placeholder="Titel (t.ex. Inception)" class="sm:col-span-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <input type="text" id="media-title" placeholder="Title (e.g. Inception)" class="sm:col-span-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 
                                 <select id="media-type" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="Film">Film</option>
-                                    <option value="Bok">Bok</option>
+                                    <option value="Movie">Movie</option>
+                                    <option value="Book">Book</option>
                                 </select>
                                 
                                 <select id="media-status" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="vill_se">Vill se / läsa</option>
-                                    <option value="sett">Har sett / läst</option>
+                                    <option value="want_to_watch">Want to watch/read</option>
+                                    <option value="completed">Watched/read</option>
                                 </select>
                                 
                                 <div class="sm:col-span-2">
-                                    <label class="block text-sm font-medium text-gray-700">Betyg (om du sett/läst):</label>
+                                    <label class="block text-sm font-medium text-gray-700">Rating (if watched/read):</label>
                                     <div id="rating-stars" class="flex">
                                         <span class="star" data-value="1">★</span>
                                         <span class="star" data-value="2">★</span>
@@ -67,17 +67,17 @@
                                     <input type="hidden" id="media-rating" value="0">
                                 </div>
 
-                                <textarea id="media-review" placeholder="Din korta recension..." class="sm:col-span-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" rows="3"></textarea>
+                                <textarea id="media-review" placeholder="Your review..." class="sm:col-span-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" rows="3"></textarea>
                                 
-                                <button id="create-media-btn" class="sm:col-span-2 w-full rounded-md bg-indigo-600 px-4 py-2 text-white font-semibold hover:bg-indigo-700">Lägg till</button>
+                                <button id="create-media-btn" class="sm:col-span-2 w-full rounded-md bg-indigo-600 px-4 py-2 text-white font-semibold hover:bg-indigo-700">Add Item</button>
                             </div>
                         </div>
                     </div>
 
                     <div class="mt-10">
-                        <h2 class="text-2xl font-semibold text-gray-900 mb-4">Min Lista</h2>
+                        <h2 class="text-2xl font-semibold text-gray-900 mb-4">My List</h2>
                         <div id="media-list" class="space-y-4">
-                            <p class="text-gray-500">Laddar din lista...</p>
+                            <p class="text-gray-500">Loading your list...</p>
                         </div>
                     </div>
                 </div>
