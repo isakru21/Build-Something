@@ -57,7 +57,7 @@ spec:
       targetPort: 27017
 
 ---
-# ================= User Service Deployment and Service (Unchanged) =================
+# ================= User Service Deployment and Service =================
 apiVersion: apps/v1
 kind: Deployment
 metadata:
