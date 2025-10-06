@@ -2,6 +2,9 @@
 
 A microservices application for managing personal movie and book lists built with Python Flask, MongoDB, and Kubernetes.
 
+## Link to git repo:
+https://github.com/isakru21/Build-Something.git
+
 ## Application Screenshots
 
 ### User Interface
